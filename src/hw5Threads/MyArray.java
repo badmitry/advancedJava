@@ -1,7 +1,7 @@
 package hw5Threads;
 
 public class MyArray {
-    protected static final int size = 10000000;
+    protected static final int size = 100000000;
     protected static final int h = size / 2;
     private float[] arr = new float[size];
     private float[] arr1 = new float[h];
@@ -15,7 +15,7 @@ public class MyArray {
 
     public void countValue(float[] arr, int startValue) {
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = (float) (arr[i] * Math.sin(0.2f + (i+startValue) / 5) * Math.cos(0.2f + (i+startValue) / 5) * Math.cos(0.4f + (i+startValue) / 2));
+            arr[i] = (float) (arr[i] * Math.sin(0.2f + (i + startValue) / 5) * Math.cos(0.2f + (i + startValue) / 5) * Math.cos(0.4f + (i + startValue) / 2));
         }
     }
 
@@ -43,11 +43,12 @@ public class MyArray {
         t2.start();
         t1.join();
         t2.join();
-        System.arraycopy(arr1,0, arr, 0,h);
+        System.arraycopy(arr1, 0, arr, 0, h);
         System.arraycopy(arr2, 0, arr, h, h);
 //        for (float i : arr
 //        ) {
 //            System.out.println(i);
 //        }
     }
+
 }

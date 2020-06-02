@@ -1,6 +1,6 @@
 package hw5Threads;
 
-public class Main {
+public class Main5 {
 
     public static void main(String[] args) throws InterruptedException {
         MyArray arr = new MyArray();
