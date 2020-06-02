@@ -1,0 +1,21 @@
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.RadioButton?>
+<VBox fx:controller="hw4JavaFX.task1.Controller"
+      xmlns:fx="http://javafx.com/fxml" alignment="center">
+    <GridPane xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+        <RadioButton fx:id="radioButton1" text="user1" GridPane.columnIndex="1" visible="false"></RadioButton>
+        <RadioButton fx:id="radioButton2" text="user2" GridPane.columnIndex="2" visible="false"></RadioButton>
+        <RadioButton fx:id="radioButton3" text="user3" GridPane.columnIndex="3" visible="false"></RadioButton>
+    </GridPane>
+    <Button fx:id="btn2" text="Start" GridPane.columnIndex="0" onAction="#start"/>
+    <TextArea fx:id="textArea" VBox.vgrow="ALWAYS" editable="false" visible="false"></TextArea>
+    <TextField fx:id="textField" VBox.vgrow="ALWAYS" visible="false" onAction="#pushText"></TextField>
+    <GridPane xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+        <Button fx:id="btn1" text="push" onAction="#pushText" visible="false"/>
+    </GridPane>
+</VBox>
+

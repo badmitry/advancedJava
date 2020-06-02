@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="center" stylesheets="@css/css.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.2-internal" fx:controller="hw4JavaFX.task2.Controller">
+    <GridPane hgap="10" vgap="10" xmlns:fx="http://javafx.com/fxml">
+        <TextField fx:id="textField0" editable="false" />
+
+    </GridPane>
+    <GridPane alignment="center" hgap="10" vgap="10" xmlns:fx="http://javafx.com/fxml">
+        <Button onAction="#pushText" text="1" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <Button onAction="#pushText" text="2" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <Button onAction="#pushText" text="3" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+        <Button onAction="#pushText" text="4" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <Button onAction="#pushText" text="5" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <Button onAction="#pushText" text="6" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+        <Button onAction="#pushText" text="7" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <Button onAction="#pushText" text="8" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <Button onAction="#pushText" text="9" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+        <Button onAction="#pushText" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <Button onAction="#pushText" text="." GridPane.columnIndex="0" GridPane.rowIndex="3" />
+        <Button onAction="#actionClear" text="=" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+
+        <Button onAction="#action" text="*" userData="*" GridPane.columnIndex="5" GridPane.rowIndex="0" />
+        <Button onAction="#action" text="/" userData="/" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+        <Button onAction="#action" text="+" userData="+" GridPane.columnIndex="5" GridPane.rowIndex="2" />
+        <Button onAction="#action" text="-" userData="-" GridPane.columnIndex="5" GridPane.rowIndex="3" />
+      <columnConstraints>
+         <ColumnConstraints />
+         <ColumnConstraints />
+         <ColumnConstraints />
+         <ColumnConstraints />
+         <ColumnConstraints />
+         <ColumnConstraints />
+      </columnConstraints>
+      <rowConstraints>
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+      </rowConstraints>
+    </GridPane>
+</VBox>

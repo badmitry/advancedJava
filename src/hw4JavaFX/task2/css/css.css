@@ -1,0 +1,9 @@
+.button{
+-fx-background-color:gray;
+}
+.button:hover {
+-fx-background-color:orange;
+}
+.text-input {
+-fx-text-fill:blue;
+}
