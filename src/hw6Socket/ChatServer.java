@@ -17,39 +17,42 @@ public class ChatServer {
     public ChatServer() {
         try {
             scanner = new Scanner(System.in);
-
             server = new ServerSocket(8189);
             System.out.println("Сервер запущен");
 
-//            output = new DataOutputStream(socket.getOutputStream());
             while (true) {
-                socket = server.accept();
-                System.out.println("Клиент подключился");
-                new Thread(() -> {
-                    try {
-                        while (true) {
-                            input = new DataInputStream(socket.getInputStream());
-                            String str = input.readUTF();
-                            System.out.printf(str);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
+                try {
+                    socket = server.accept();
+                    System.out.println("Клиент подключился");
+                    new Thread(() -> {
                         try {
-                            socket.close();
+                            while (true) {
+                                input = new DataInputStream(socket.getInputStream());
+                                String str = input.readUTF();
+                                System.out.printf(str);
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
+                        } finally {
+
+                            try {
+                                socket.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            System.out.println("клиент отключился");
                         }
+                    }).start();
+                    output = new DataOutputStream(socket.getOutputStream());
+                    while (true) {
+                        String str = scanner.nextLine();
+                        output.writeUTF(str);
+                        System.out.println("Server: " + str);
+
                     }
-                }).start();
-                output = new DataOutputStream(socket.getOutputStream());
-                while (true){
-                    String str = scanner.nextLine();
-                    output.writeUTF(str);
-                    System.out.println("Server: " + str);
-
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-
             }
 
 

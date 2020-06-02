@@ -3,14 +3,11 @@ package hw6Socket;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.lang.annotation.Repeatable;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -30,7 +27,6 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
         try {
             socket = new Socket(IP, PORT);
             input = new DataInputStream(socket.getInputStream());
@@ -45,6 +41,7 @@ public class Controller implements Initializable {
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
+                    System.out.println("сервер не отвечает");
                     try {
                         socket.close();
                         input.close();
@@ -57,8 +54,6 @@ public class Controller implements Initializable {
             }).start();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            System.out.println("сервер не отвечает");
         }
 
     }
