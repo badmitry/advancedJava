@@ -6,8 +6,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import static javafx.application.Platform.*;
-
 public class ChatClient extends Application {
 
     @Override
@@ -15,6 +13,7 @@ public class ChatClient extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("MyChat");
         primaryStage.setScene(new Scene(root, 300, 275));
+        primaryStage.show();
     }
 
     public static void main(String[] args) {
