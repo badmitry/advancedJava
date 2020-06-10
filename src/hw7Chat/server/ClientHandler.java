@@ -22,14 +22,16 @@ public class ClientHandler {
             outputStream = new DataOutputStream(socket.getOutputStream());
             Thread t1 = new Thread(() -> {
                 try {
-                    //authentification
+                    //authentification/registration/
                     while (true) {
                         String str = inputStream.readUTF();
 
                         if (str.startsWith("/auth ")) {
+                            socket.setSoTimeout(120000);
                             String[] token = str.split(" ");
 
-                            if (token.length < 2) {
+                            if (token.length < 3) {
+                                sendMsg("Вы не заполнили логин/пароль");
                                 continue;
                             }
                             String newNick = server.getAuthService().getNickName(token[1], token[2]);
@@ -37,6 +39,7 @@ public class ClientHandler {
                                 sendMsg("Пользователь " + newNick + " уже зарегестрирован в системе.");
                             } else if (newNick != null) {
                                 sendMsg("/authok " + newNick);
+                                socket.setSoTimeout(0);
                                 nick = newNick;
                                 login = token[1];
                                 server.subscribe(this);
@@ -45,23 +48,38 @@ public class ClientHandler {
                             } else {
                                 sendMsg("Неверный логин / пароль");
                             }
+                        } else if (str.startsWith("/reg ")) {
+                            String[] token = str.split(" ");
+
+                            if (token.length < 4) {
+                                sendMsg("Вы не заполнили все поля");
+                                continue;
+                            }
+                            boolean succeed = server.getAuthService().registration(token[1], token[2], token[3]);
+                            if (succeed) {
+                                sendMsg("Регистрация успешно прошла.");
+                            } else {
+                                sendMsg("Login или nickName заняты. \nПопробуйте снова!");
+                            }
                         }
                     }
 
                     //chat
                     while (true) {
                         String str = inputStream.readUTF();
-                        if (str.equals("/end")) {
-                            sendMsg("/end");
-                            server.broadcastMsg(nick + " отключился");
-                            break;
-                        }
-                        if (str.startsWith("/w ")) {
-                            String[] arr = str.split(" ", 3);
-                            if (server.checkNick(arr[1])) {
-                                server.personalMsg(arr[1], nick +" пишет приватно Вам: " + arr[2]);
-                            } else {
-                                sendMsg("Клиент " + arr[1] + " не подключен");
+                        if (str.startsWith("/")) {
+                            if (str.equals("/end")) {
+                                sendMsg("/end");
+                                server.broadcastMsg(nick + " отключился");
+                                break;
+                            }
+                            if (str.startsWith("/w ")) {
+                                String[] arr = str.split(" ", 3);
+                                if (server.checkNick(arr[1])) {
+                                    server.personalMsg(arr[1], this, arr[2]);
+                                } else {
+                                    sendMsg("Клиент " + arr[1] + " не подключен");
+                                }
                             }
                         } else {
                             server.broadcastMsg(nick + ": " + str);
@@ -71,6 +89,7 @@ public class ClientHandler {
                     e.printStackTrace();
                 } finally {
                     System.out.println("Клиент отключился");
+                    server.broadcastMsg(nick + " отключился");
                     server.unsubscribe(this);
                     try {
                         socket.close();
@@ -102,4 +121,9 @@ public class ClientHandler {
             return false;
         }
     }
+
+    public String getNick() {
+        return nick;
+    }
+
 }

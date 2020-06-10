@@ -1,22 +1,27 @@
 package hw7Chat.client;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 
 
-import java.awt.event.ActionEvent;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -33,14 +38,17 @@ public class Controller implements Initializable {
     public PasswordField passwordField;
     @FXML
     public HBox msgPanel;
+    @FXML
+    public ListView listView;
 
-    Socket socket;
-    DataInputStream inputStream;
-    DataOutputStream outputStream;
-    final String IP = "127.0.0.1";
-    final int PORT = 10000;
+    Stage regStage;
+
     private boolean authenticated = false;
+    private boolean showListUsers = false;
+    private boolean showRegistrationWindow = false;
     private String nick;
+
+    NetConnection net = new NetConnection(this);
 
     public void setAuthenticated(boolean authenticated) {
         this.authenticated = authenticated;
@@ -62,81 +70,105 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
         setAuthenticated(false);
-    }
-
-    private void connect() {
-        try {
-            socket = new Socket(IP, PORT);
-            inputStream = new DataInputStream(socket.getInputStream());
-            outputStream = new DataOutputStream(socket.getOutputStream());
-
-            Thread t1 = new Thread(() -> {
-
-                try {
-                    //authentification
-                    while (true) {
-                        String str = inputStream.readUTF();
-                        if (str.startsWith("/authok ")) {
-                            textArea.clear();
-                            nick = str.split(" ")[1];
-                            setAuthenticated(true);
-                            break;
-                        } else {
-                            textArea.clear();
-                            textArea.appendText(str);
-                        }
-                    }
-                    //chat
-                    while (true) {
-                        String str = inputStream.readUTF();
-                        if (str.equals("/end")){
-                            break;
-                        }
-                        textArea.appendText(str + "\n");
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }finally {
-                    System.out.println("Клиент: " + nick + " отключился");
-                    setAuthenticated(false);
-                    try {
-                        socket.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+        regStage = createRegWindow();
+        Platform.runLater(() -> {
+            Stage stage = (Stage) textField.getScene().getWindow();
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent windowEvent) {
+                    net.sendMsg("/end");
                 }
-
             });
-            t1.setDaemon(true);
-            t1.start();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        });
     }
 
     public void sendMsg() {
-        try {
-            outputStream.writeUTF(textField.getText());
-            textField.clear();
-            textField.requestFocus();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        net.sendMsg(textField.getText());
+        textField.clear();
+        textField.requestFocus();
     }
 
     public void tryToAuth(javafx.event.ActionEvent actionEvent) {
-        if (socket == null || socket.isClosed()) {
-            connect();
+        net.tryToAuth(loginField.getText().trim(), passwordField.getText().trim());
+        passwordField.clear();
+    }
+
+    public void showUserList(ActionEvent actionEvent) {
+        if (showListUsers) {
+            showListUsers = false;
+        } else {
+            showListUsers = true;
         }
+        listView.setVisible(showListUsers);
+        listView.setManaged(showListUsers);
+    }
+
+    public void authOk(String nick) {
+        textArea.clear();
+        this.nick = nick;
+        setAuthenticated(true);
+    }
+
+    public void notAuth(String str) {
+        textArea.clear();
+        textArea.appendText(str);
+        showListUsers = false;
+        listView.setVisible(showListUsers);
+        listView.setManaged(showListUsers);
+    }
+
+    public void addText(String str) {
+        textArea.appendText(str + "\n");
+    }
+
+    public void writeClientList(String[] arr) {
+        listView.getItems().clear();
+        for (int i = 1; i < arr.length; i++) {
+            listView.getItems().add(arr[i]);
+        }
+
+    }
+
+    public void clickUserFromList(MouseEvent mouseEvent) {
+        textField.setText("/w " + listView.getSelectionModel().getSelectedItem() + " ");
+    }
+
+    private Stage createRegWindow() {
+        Stage stage = null;
         try {
-            outputStream.writeUTF("/auth " + loginField.getText().trim() + " " +
-                    passwordField.getText().trim());
-            passwordField.clear();
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("regSample.fxml"));
+            Parent root = fxmlLoader.load();
+            stage = new Stage();
+            stage.setTitle("Registration");
+            stage.setScene(new Scene(root, 300, 150));
+            stage.initStyle(StageStyle.UTILITY);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            RegController regController = fxmlLoader.getController();
+            regController.controller = this;
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return stage;
+    }
+
+    public void showRegWindow(ActionEvent actionEvent) {
+        if (!showRegistrationWindow) {
+            regStage.show();
+            showRegistrationWindow = true;
+            return;
+        }else {
+            regStage.hide();
+            showRegistrationWindow = false;
+            return;
+        }
+
+    }
+
+    public void tryRegistration(String login, String password, String nick) {
+        net.tryRegistration(login, password, nick);
+        showRegWindow(null);
     }
 }

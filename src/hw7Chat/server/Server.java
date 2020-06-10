@@ -45,22 +45,40 @@ public class Server {
         }
     }
 
-    public void personalMsg (String nick, String msg) {
+    private void sendListUsers() {
+        StringBuilder sb = new StringBuilder("/clientList ");
         for (ClientHandler c : clients) {
-            if (c.checkNick(nick)) {
-                c.sendMsg(msg);
-                return;
+            sb.append(c.getNick()).append(" ");
+        }
+        String msg = sb.toString();
+        broadcastMsg(msg);
+    }
+
+    public void personalMsg (String recipient, ClientHandler client, String msg) {
+        String str = String.format("[%s] %s", client.getNick(), msg);
+        if (recipient.equals(client.getNick())) {
+            client.sendMsg(str);
+            return;
+        } else {
+            for (ClientHandler c : clients) {
+                if (c.checkNick(recipient)) {
+                    c.sendMsg(str);
+                    client.sendMsg(str);
+                    return;
+                }
             }
         }
-
+        client.sendMsg("пользователь " + recipient + " не найден.");
     }
 
     public void subscribe (ClientHandler clientHandler) {
         clients.add(clientHandler);
+        sendListUsers();
     }
 
     public void unsubscribe (ClientHandler clientHandler) {
         clients.remove(clientHandler);
+        sendListUsers();
     }
 
     public AuthService getAuthService() {

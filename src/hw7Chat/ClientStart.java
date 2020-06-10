@@ -1,4 +1,4 @@
-package hw7Chat.client;
+package hw7Chat;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -10,7 +10,7 @@ public class ClientStart extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("client/sample.fxml"));
         primaryStage.setTitle("MyChat");
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
