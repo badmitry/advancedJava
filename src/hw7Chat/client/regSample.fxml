@@ -1,0 +1,19 @@
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Label?>
+<VBox fx:controller="hw7Chat.client.RegController"
+      xmlns:fx="http://javafx.com/fxml" alignment="center">
+    <Label text="Login:"/>
+    <TextField fx:id="loginField" promptText="Login"/>
+    <Label text="Password:"/>
+    <PasswordField fx:id="passwordField" promptText="Password"/>
+    <Label text="NickName:"/>
+    <TextField fx:id="nickField" promptText="Login"/>
+    <Button text="Зарегистрироваться" onAction="#clickOk"/>
+
+</VBox>
